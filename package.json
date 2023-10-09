@@ -14,6 +14,7 @@
     "@nuxtjs/pwa": "^3.3.5",
     "cookie-universal-nuxt": "^2.2.2",
     "core-js": "^3.25.3",
+    "node-fetch-native": "^1.4.0",
     "nuxt": "^2.15.8",
     "vue": "^2.7.10",
     "vue-server-renderer": "^2.7.10",
