@@ -1,20 +1,42 @@
 <template>
   <div
-    class="bg-slate-50 min-h-screen w-full font-semibold text-cyan-900 flex items-center"
+    class="bg-slate-50 py-10 min-h-screen w-full font-semibold text-cyan-900 flex items-center"
   >
     <div class="w-full">
       <div class="flex justify-center">
         <h1 class="text-5xl tracking-widest">#GachaKata</h1>
       </div>
 
-      <div class="flex justify-center mt-4">
-        <a class="mr-1" href="https://github.com/nyancodeid/quotes"
-          ><img
-            src="https://img.shields.io/badge/github-gachakata-brightgreen?logo=github&amp;style=flat"
-            width="109"
-            height="20"
-            alt="Repository"
-        /></a>
+      <div class="flex justify-center mt-4 flex-wrap">
+        <img
+          class="mr-2 my-1"
+          alt="?"
+          src="https://img.shields.io/badge/github-gachakata-brightgreen?logo=github&style=flat"
+        />
+        <!-- <img
+          class="mr-2 my-1"
+          alt="?"
+          src="https://img.shields.io/github/license/ricko-v/gachakata.svg"
+        />
+        <img
+          class="mr-2 my-1"
+          alt="?"
+          src="https://img.shields.io/github/issues-pr/ricko-v/gachakata.svg"
+        />
+        <img
+          class="mr-2 my-1"
+          alt="?"
+          src="https://img.shields.io/github/issues-pr-closed/ricko-v/gachakata.svg"
+        />
+        <a
+          href="https://github.com/ricko-v/gachakata/releases/download/v.2.0.0/gachakata.apk"
+        >
+          <img
+            class="mr-2 my-1"
+            alt="?"
+            src="https://img.shields.io/badge/download-aplikasi-blue?style=?style=for-the-badge&logo=android"
+          />
+        </a> -->
       </div>
 
       <div class="flex justify-center mt-8 w-100">
@@ -58,19 +80,24 @@
         :showModal="showModal"
       />
 
+      <Info @close="showModalInfo = false" :showModal="showModalInfo" />
+
       <div class="flex justify-center mt-6 mb-6">
         <button
-          @click="gacha"
-          :disabled="loading || !kata.q"
+          @click="!kata.q ? (showModal = true) : gacha()"
+          :disabled="loading"
           class="bg-cyan-900 p-3 rounded text-white rounded-lg"
         >
-          - {{ loading ? acak : "G A C H A" }} -
+          - {{ loading ? acak : !kata.q ? "G A N T I" : "G A C H A" }} -
         </button>
       </div>
     </div>
 
     <div>
-      <FloatingButton @click="showModal = true" />
+      <FloatingButton
+        @onShowModal="showModal = true"
+        @onShowModalInfo="showModalInfo = true"
+      />
     </div>
   </div>
 </template>
@@ -122,6 +149,7 @@ export default {
       acak: "",
       loading: false,
       showModal: false,
+      showModalInfo: false,
     };
   },
 
@@ -135,7 +163,7 @@ export default {
     gacha() {
       this.loading = true;
       // this.$nuxt.refresh();
-      window.location.reload();
+      this.$router.app.refresh();
     },
     randomEffect() {
       let string = "GACHA";

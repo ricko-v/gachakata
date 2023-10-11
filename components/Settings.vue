@@ -51,7 +51,7 @@ export default {
       this.loadingReset = true;
       this.$cookies.remove("gachakata");
 
-      window.location.reload();
+      this.$nuxt.refresh();
     },
     save(e) {
       this.loading = true;
@@ -67,7 +67,9 @@ export default {
         }
       );
 
-      window.location.reload();
+      this.$nuxt.refresh();
+      this.loading = false;
+      this.$emit("close", true);
     },
   },
 
