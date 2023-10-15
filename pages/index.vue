@@ -66,7 +66,7 @@
 
           <div v-if="!kata">
             <p class="text-left text-4xl">❝</p>
-            <i class="text-xl">Kata kunci '{{ cookies }}' tidak ditemukan :(</i
+            <i class="text-xl">Kata kunci '{{ cookies.kataKunci }}' tidak ditemukan :(</i
             >'
             <p class="text-right text-4xl leading-4 mt-[20px]">❞</p>
           </div>
