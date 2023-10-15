@@ -114,7 +114,9 @@ export default {
       let page = cookies.lastPage
         ? `&page=${Math.floor(Math.random() * cookies.lastPage)}`
         : "";
-      req = await $axios(`/api/gacha?q=${cookies.kataKunci}${page}`);
+      req = await $axios(
+        `https://gachakata.vercel.app/api/gacha?q=${cookies.kataKunci}${page}`
+      );
       res = req.data.result;
       app.$cookies.set("gachakata", {
         ...cookies,
@@ -144,7 +146,7 @@ export default {
         "Ibu",
       ];
       req = await $axios(
-        `/api/gacha?q=${
+        `https://gachakata.vercel.app/api/gacha?q=${
           random[Math.floor(Math.random() * (random.length - 1))]
         }`
       );
