@@ -12,10 +12,13 @@
     "@kouts/vue-modal": "^2.1.12",
     "@nuxtjs/axios": "^5.13.6",
     "@nuxtjs/pwa": "^3.3.5",
+    "cheerio": "^1.0.0-rc.12",
     "cookie-universal-nuxt": "^2.2.2",
     "core-js": "^3.25.3",
+    "express": "^4.18.2",
     "node-fetch-native": "^1.4.0",
     "nuxt": "^2.15.8",
+    "request": "^2.88.2",
     "vue": "^2.7.10",
     "vue-server-renderer": "^2.7.10",
     "vue-template-compiler": "^2.7.10"

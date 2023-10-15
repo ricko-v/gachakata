@@ -7,13 +7,13 @@
         <h1 class="text-5xl tracking-widest">#GachaKata</h1>
       </div>
 
-      <div class="flex justify-center mt-4 flex-wrap">
+      <!-- <div class="flex justify-center mt-4 flex-wrap">
         <img
           class="mr-2 my-1"
           alt="?"
           src="https://img.shields.io/badge/github-gachakata-brightgreen?logo=github&style=flat"
         />
-        <!-- <img
+        <img
           class="mr-2 my-1"
           alt="?"
           src="https://img.shields.io/github/license/ricko-v/gachakata.svg"
@@ -36,14 +36,14 @@
             alt="?"
             src="https://img.shields.io/badge/download-aplikasi-blue?style=?style=for-the-badge&logo=android"
           />
-        </a> -->
-      </div>
+        </a>
+      </div> -->
 
       <div class="flex justify-center mt-8 w-100">
         <div
           class="border rounded-lg text-center border-stone-100 shadow-sm w-100 mx-4 w-full p-3 bg-white md:w-2/3"
         >
-          <div v-if="kata.q">
+          <div v-if="kata">
             <p class="text-left text-4xl">❝</p>
             <i class="text-xl">{{
               loading ? randomEffectQ(kata.q) : kata.q
@@ -64,10 +64,9 @@
             </p>
           </div>
 
-          <div v-if="!kata.q">
+          <div v-if="!kata">
             <p class="text-left text-4xl">❝</p>
-            <i class="text-xl"
-              >Kata kunci '{{ cookies.kataKunci }}' tidak ditemukan :(</i
+            <i class="text-xl">Kata kunci '{{ cookies }}' tidak ditemukan :(</i
             >'
             <p class="text-right text-4xl leading-4 mt-[20px]">❞</p>
           </div>
@@ -84,11 +83,11 @@
 
       <div class="flex justify-center mt-6 mb-6">
         <button
-          @click="!kata.q ? (showModal = true) : gacha()"
+          @click="!kata ? (showModal = true) : gacha()"
           :disabled="loading"
           class="bg-cyan-900 p-3 rounded text-white rounded-lg"
         >
-          - {{ loading ? acak : !kata.q ? "G A N T I" : "G A C H A" }} -
+          - {{ loading ? acak : !kata ? "G A N T I" : "G A C H A" }} -
         </button>
       </div>
     </div>
@@ -107,7 +106,7 @@ export default {
   name: "Home",
 
   async asyncData({ $axios, app }) {
-    let req, res, a;
+    let req, res;
     let loading = false;
     let cookies = app.$cookies.get("gachakata");
 
@@ -115,24 +114,47 @@ export default {
       let page = cookies.lastPage
         ? `&page=${Math.floor(Math.random() * cookies.lastPage)}`
         : "";
-      req = await $axios(
-        `https://jkscrapper.vercel.app/cari?q=${cookies.kataKunci}${page}`
-      );
-      res = req.data.data.result;
+      req = await $axios(`/api/gacha?q=${cookies.kataKunci}${page}`);
+      res = req.data.result;
       app.$cookies.set("gachakata", {
         ...cookies,
-        lastPage: req.data.data.lastPaginate,
+        lastPage: req.data.lastPaginate,
       });
     } else {
-      req = await $axios("https://jkscrapper.vercel.app/acak");
-      res = req.data.data;
+      let random = [
+        "Ali bin Abi Thalib",
+        "Tere Liye",
+        "Albert Einstein",
+        "Mahatma Gandhi",
+        "Wira Nagara",
+        "Boy Candra",
+        "Pidi Baiq",
+        "Sujiwo Tejo",
+        "Fiersa Besari",
+        "Joko Pinurbo",
+        "Sapardi Djoko Damono",
+        "Soekarno",
+        "Jatuh Cinta",
+        "Patah Hati",
+        "Rindu",
+        "Hujan",
+        "Sepi",
+        "Manusia",
+        "Doa",
+        "Ibu",
+      ];
+      req = await $axios(
+        `/api/gacha?q=${
+          random[Math.floor(Math.random() * (random.length - 1))]
+        }`
+      );
+      res = req.data.result;
     }
 
     if (res.length > 0) {
-      a = Math.floor(Math.random() * res.length);
       return {
         loading: loading,
-        kata: res[a],
+        kata: res[0],
         cookies: cookies,
       };
     } else {
