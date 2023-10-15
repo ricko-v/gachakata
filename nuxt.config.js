@@ -43,7 +43,7 @@ export default {
     '@nuxtjs/axios'
   ],
 
-  serverMiddleware: ['~/api/index'],
+  serverMiddleware: ['~/api/index.js'],
 
   // PWA module configuration: https://go.nuxtjs.dev/pwa
   pwa: {
