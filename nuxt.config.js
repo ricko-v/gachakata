@@ -48,7 +48,13 @@ export default {
   // PWA module configuration: https://go.nuxtjs.dev/pwa
   pwa: {
     manifest: {
-      lang: 'en'
+      name: 'GachaKata',
+      short_name: 'GachaKata',
+      description: 'GachaKata adalah sebuah web yang akan memberikan kata-kata dari berbagai tokoh didunia dengan sistem gacha',
+      lang: 'en',
+    },
+    icon: {
+      purpose: 'maskable'
     }
   },
 
