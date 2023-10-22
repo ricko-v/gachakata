@@ -2,7 +2,7 @@ export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   target: 'server',
   server: {
-    // host: '192.168.158.234'
+    // host: '192.168.217.234'
   },
   head: {
     title: 'Gachakata',

@@ -39,9 +39,10 @@
         </a>
       </div> -->
 
-      <div class="flex justify-center mt-8 w-100">
+      <div class="flex justify-center my-8 w-100 mx-4">
         <div
-          class="border rounded-lg text-center border-stone-100 shadow-sm w-100 mx-4 w-full p-3 bg-white md:w-2/3"
+          id="main-gacha"
+          class="border rounded-lg text-center border-stone-100 shadow-sm w-100 w-full p-3 bg-white md:w-2/3"
         >
           <div v-if="kata">
             <p class="text-left text-4xl">❝</p>
@@ -94,6 +95,8 @@
 
     <div>
       <FloatingButton
+        :loading="loading"
+        @onDownload="download"
         @onShowModal="showModal = true"
         @onShowModalInfo="showModalInfo = true"
       />
@@ -102,6 +105,8 @@
 </template>
 
 <script>
+import * as htmlToImage from "html-to-image";
+
 export default {
   name: "Home",
 
@@ -184,11 +189,23 @@ export default {
   },
 
   methods: {
+    download() {
+      htmlToImage
+        .toJpeg(document.getElementById("main-gacha"), { quality: 1 })
+        .then(function (dataUrl) {
+          var link = document.createElement("a");
+          link.download = "gachakata.jpeg";
+          link.href = dataUrl;
+          link.click();
+        });
+    },
+
     gacha() {
       this.loading = true;
       // this.$nuxt.refresh();
       this.$router.app.refresh();
     },
+
     randomEffect() {
       let string = "GACHA";
       let a = "";
@@ -199,6 +216,7 @@ export default {
 
       this.acak = a;
     },
+
     randomEffectQ(x) {
       let string = x;
       let a = "";
