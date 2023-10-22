@@ -5,7 +5,8 @@
       <input
         min="3"
         required
-        v-model="kataKunci"
+        :value="kataKunci"
+        @input="(e) => kataKunci = e.target.value"
         class="border w-full rounded mt-1 px-3 py-2 outline-0 focus:border-cyan-900"
       />
       <small v-if="!isValidQ && kataKunci != ''" class="text-red-500"
