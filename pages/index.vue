@@ -28,8 +28,11 @@
           alt="?"
           src="https://img.shields.io/github/issues-pr-closed/ricko-v/gachakata.svg"
         />
+      </div> -->
+
+      <div class="flex justify-center mt-4 flex-wrap">
         <a
-          href="https://github.com/ricko-v/gachakata/releases/download/v.2.0.0/gachakata.apk"
+          href="https://github.com/ricko-v/gachakata/releases/download/release/GachaKata.apk"
         >
           <img
             class="mr-2 my-1"
@@ -37,7 +40,7 @@
             src="https://img.shields.io/badge/download-aplikasi-blue?style=?style=for-the-badge&logo=android"
           />
         </a>
-      </div> -->
+      </div>
 
       <div class="flex justify-center my-8 w-100 mx-4">
         <div
@@ -67,7 +70,8 @@
 
           <div v-if="!kata">
             <p class="text-left text-4xl">❝</p>
-            <i class="text-xl">Kata kunci '{{ cookies.kataKunci }}' tidak ditemukan :(</i
+            <i class="text-xl"
+              >Kata kunci '{{ cookies.kataKunci }}' tidak ditemukan :(</i
             >'
             <p class="text-right text-4xl leading-4 mt-[20px]">❞</p>
           </div>
@@ -194,7 +198,7 @@ export default {
         .toJpeg(document.getElementById("main-gacha"), { quality: 1 })
         .then(function (dataUrl) {
           var link = document.createElement("a");
-          link.download = "gachakata.jpeg";
+          link.download = `gachakata-${Math.floor(Math.random() * 99999)}.jpeg`;
           link.href = dataUrl;
           link.click();
         });
