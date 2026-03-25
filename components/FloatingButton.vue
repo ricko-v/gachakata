@@ -2,7 +2,7 @@
   <div class="fixed flex gap-[20px] bottom-[5px] right-5 lg:block lg:bottom-5">
     <div v-if="!loading" class="mb-4">
       <button
-        @click="$emit('onDownload', true)"
+        @click="emit('onDownload')"
         class="bg-cyan-900 text-white p-3 rounded-lg"
       >
         <svg
@@ -26,7 +26,7 @@
 
     <div class="mb-4">
       <button
-        @click="$emit('onShowModal', true)"
+        @click="emit('onShowModal')"
         class="bg-cyan-900 text-white p-3 rounded-lg"
       >
         <svg
@@ -49,7 +49,7 @@
 
     <div>
       <button
-        @click="$emit('onShowModalInfo', true)"
+        @click="emit('onShowModalInfo')"
         class="bg-cyan-900 text-white p-3 rounded-lg"
       >
         <svg
@@ -72,8 +72,14 @@
   </div>
 </template>
 
-<script>
-export default {
-  props: ["loading"],
-};
+<script setup lang="ts">
+defineProps<{
+  loading: boolean
+}>()
+
+const emit = defineEmits<{
+  onDownload: []
+  onShowModal: []
+  onShowModalInfo: []
+}>()
 </script>

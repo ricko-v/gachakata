@@ -1,89 +1,87 @@
 <template>
-  <vue-modal @close="$emit('close', true)" v-model="showModal" title="Setelan">
-    <form @reset="reset" @submit="save">
+  <Modal v-model="localShowModal" title="Setelan" @close="emit('close')">
+    <form @reset.prevent="reset" @submit.prevent="save">
       <label class="text-cyan-900 font-semibold">Kata Kunci</label>
       <input
-        min="3"
+        minlength="3"
         required
         :value="kataKunci"
-        @input="(e) => kataKunci = e.target.value"
+        @input="onInput"
         class="border w-full rounded mt-1 px-3 py-2 outline-0 focus:border-cyan-900"
       />
-      <small v-if="!isValidQ && kataKunci != ''" class="text-red-500"
-        >Minimal 3 huruf diperlukan</small
-      >
-      <small v-if="kataKunci == '' || isValidQ" class="text-slate-500"
-        >Masukan nama tokoh atau kata</small
-      >
+      <small v-if="!isValidQ && kataKunci !== ''" class="text-red-500">
+        Minimal 3 huruf diperlukan
+      </small>
+      <small v-if="kataKunci === '' || isValidQ" class="text-slate-500">
+        Masukan nama tokoh atau kata
+      </small>
       <div class="flex w-full justify-end mt-4 gap-3">
         <button
           v-if="data"
           type="reset"
           class="bg-red-600 font-semibold text-white px-3 py-2 rounded-lg"
         >
-          {{ loadingReset ? "Mengatur Ulang..." : "Atur Ulang" }}
+          {{ loadingReset ? 'Mengatur Ulang...' : 'Atur Ulang' }}
         </button>
         <button
           type="submit"
           :disabled="loading || !isValidQ"
           class="bg-cyan-900 font-semibold text-white px-3 py-2 rounded-lg disabled:bg-slate-300"
         >
-          {{ loading ? "Menyimpan..." : "Simpan" }}
+          {{ loading ? 'Menyimpan...' : 'Simpan' }}
         </button>
       </div>
     </form>
-  </vue-modal>
+  </Modal>
 </template>
 
-<script>
-export default {
-  props: ["showModal", "data"],
-  data() {
-    return {
-      isValidQ: this.data ? true : false,
-      kataKunci: this.data ? this.data.kataKunci : "",
-      loading: false,
-      loadingReset: false,
-    };
-  },
+<script setup lang="ts">
+const props = defineProps<{
+  showModal: boolean
+  data: { kataKunci: string; lastPage?: number } | null
+}>()
 
-  methods: {
-    reset() {
-      this.loadingReset = true;
-      this.$cookies.remove("gachakata");
+const emit = defineEmits<{
+  close: []
+  'update:showModal': [value: boolean]
+}>()
 
-      window.location.reload();
-    },
-    save(e) {
-      this.loading = true;
-      e.preventDefault();
+const localShowModal = computed({
+  get: () => props.showModal,
+  set: (val: boolean) => emit('update:showModal', val),
+})
 
-      this.$cookies.set(
-        "gachakata",
-        {
-          kataKunci: this.kataKunci,
-        },
-        {
-          path: "/",
-        }
-      );
+const kataKunci = ref(props.data?.kataKunci ?? '')
+const isValidQ = ref(!!props.data)
+const loading = ref(false)
+const loadingReset = ref(false)
 
-      this.$nuxt.refresh();
-      this.loading = false;
-      this.$emit("close", true);
-    },
-  },
+const cookie = useCookie<{ kataKunci: string; lastPage?: number } | null>('gachakata')
 
-  watch: {
-    kataKunci: function (val) {
-      if (val !== "" && val.length < 3) {
-        this.isValidQ = false;
-      } else {
-        this.isValidQ = true;
-      }
+function onInput(e: Event) {
+  const val = (e.target as HTMLInputElement).value.toLowerCase()
+  kataKunci.value = val
+}
 
-      this.kataKunci = val.toLowerCase();
-    },
-  },
-};
+watch(kataKunci, (val) => {
+  if (val !== '' && val.length < 3) {
+    isValidQ.value = false
+  } else {
+    isValidQ.value = true
+  }
+})
+
+function reset() {
+  loadingReset.value = true
+  cookie.value = null
+  window.location.reload()
+}
+
+async function save() {
+  loading.value = true
+  cookie.value = { kataKunci: kataKunci.value }
+  await refreshNuxtData()
+  loading.value = false
+  emit('close')
+}
 </script>

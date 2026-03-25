@@ -7,36 +7,13 @@
         <h1 class="text-5xl tracking-widest">#GachaKata</h1>
       </div>
 
-      <!-- <div class="flex justify-center mt-4 flex-wrap">
-        <img
-          class="mr-2 my-1"
-          alt="?"
-          src="https://img.shields.io/badge/github-gachakata-brightgreen?logo=github&style=flat"
-        />
-        <img
-          class="mr-2 my-1"
-          alt="?"
-          src="https://img.shields.io/github/license/ricko-v/gachakata.svg"
-        />
-        <img
-          class="mr-2 my-1"
-          alt="?"
-          src="https://img.shields.io/github/issues-pr/ricko-v/gachakata.svg"
-        />
-        <img
-          class="mr-2 my-1"
-          alt="?"
-          src="https://img.shields.io/github/issues-pr-closed/ricko-v/gachakata.svg"
-        />
-      </div> -->
-
       <div class="flex justify-center mt-4 flex-wrap">
         <a
           href="https://github.com/ricko-v/gachakata/releases/download/release/GachaKata.apk"
         >
           <img
             class="mr-2 my-1"
-            alt="?"
+            alt="Download APK"
             src="https://img.shields.io/badge/download-aplikasi-blue?style=?style=for-the-badge&logo=android"
           />
         </a>
@@ -70,16 +47,14 @@
 
           <div v-if="!kata">
             <p class="text-left text-4xl">❝</p>
-            <i class="text-xl"
-              >Kata kunci '{{ cookies.kataKunci }}' tidak ditemukan :(</i
-            >'
+            <i class="text-xl">Kata kunci '{{ cookieData?.kataKunci }}' tidak ditemukan :(</i>
             <p class="text-right text-4xl leading-4 mt-[20px]">❞</p>
           </div>
         </div>
       </div>
 
       <Settings
-        :data="cookies"
+        :data="cookieData ?? null"
         @close="showModal = false"
         :showModal="showModal"
       />
@@ -92,7 +67,7 @@
           :disabled="loading"
           class="bg-cyan-900 p-3 rounded text-white rounded-lg"
         >
-          - {{ loading ? acak : !kata ? "G A N T I" : "G A C H A" }} -
+          - {{ loading ? acak : !kata ? 'G A N T I' : 'G A C H A' }} -
         </button>
       </div>
     </div>
@@ -108,129 +83,138 @@
   </div>
 </template>
 
-<script>
-import * as htmlToImage from "html-to-image";
+<script setup lang="ts">
+import * as htmlToImage from 'html-to-image'
 
-export default {
-  name: "Home",
+interface Kata {
+  q: string
+  nama: string
+  keterangan: string
+  sumber: string
+}
 
-  async asyncData({ $axios, app }) {
-    let req, res;
-    let loading = false;
-    let cookies = app.$cookies.get("gachakata");
+interface CookieData {
+  kataKunci: string
+  lastPage?: number
+}
 
-    if (cookies) {
-      let page = cookies.lastPage
-        ? `&page=${Math.floor(Math.random() * cookies.lastPage)}`
-        : "";
-      req = await $axios(
-        `https://gachakata.vercel.app/api/gacha?q=${cookies.kataKunci}${page}`
-      );
-      res = req.data.result;
-      app.$cookies.set("gachakata", {
-        ...cookies,
-        lastPage: req.data.lastPaginate,
-      });
-    } else {
-      let random = [
-        "Ali bin Abi Thalib",
-        "Tere Liye",
-        "Albert Einstein",
-        "Mahatma Gandhi",
-        "Wira Nagara",
-        "Boy Candra",
-        "Pidi Baiq",
-        "Sujiwo Tejo",
-        "Fiersa Besari",
-        "Joko Pinurbo",
-        "Sapardi Djoko Damono",
-        "Soekarno",
-        "Jatuh Cinta",
-        "Patah Hati",
-        "Rindu",
-        "Hujan",
-        "Sepi",
-        "Manusia",
-        "Doa",
-        "Ibu",
-      ];
-      req = await $axios(
-        `https://gachakata.vercel.app/api/gacha?q=${
-          random[Math.floor(Math.random() * (random.length - 1))]
-        }`
-      );
-      res = req.data.result;
+const cookieData = useCookie<CookieData | null>('gachakata')
+
+const showModal = ref(false)
+const showModalInfo = ref(false)
+const loading = ref(false)
+const acak = ref('')
+
+const randomKeywords = [
+  'Ali bin Abi Thalib',
+  'Tere Liye',
+  'Albert Einstein',
+  'Mahatma Gandhi',
+  'Wira Nagara',
+  'Boy Candra',
+  'Pidi Baiq',
+  'Sujiwo Tejo',
+  'Fiersa Besari',
+  'Joko Pinurbo',
+  'Sapardi Djoko Damono',
+  'Soekarno',
+  'Jatuh Cinta',
+  'Patah Hati',
+  'Rindu',
+  'Hujan',
+  'Sepi',
+  'Manusia',
+  'Doa',
+  'Ibu',
+]
+
+const { data: fetchedData, refresh } = await useAsyncData<{
+  lastPaginate: number
+  result: Kata[]
+}>('gacha', async () => {
+  let q: string
+  let page = ''
+
+  if (cookieData.value) {
+    q = cookieData.value.kataKunci
+    if (cookieData.value.lastPage) {
+      page = `&page=${Math.floor(Math.random() * cookieData.value.lastPage)}`
     }
+  } else {
+    q = randomKeywords[Math.floor(Math.random() * randomKeywords.length)]
+  }
 
-    if (res.length > 0) {
-      return {
-        loading: loading,
-        kata: res[0],
-        cookies: cookies,
-      };
-    } else {
-      return {
-        loading: loading,
-        kata: {},
-        cookies: cookies,
-      };
+  const data = await $fetch<{ lastPaginate: number; result: Kata[] }>(
+    `/api/gacha?q=${encodeURIComponent(q)}${page}`,
+  )
+
+  // Update lastPage in cookie
+  if (cookieData.value) {
+    cookieData.value = {
+      ...cookieData.value,
+      lastPage: data.lastPaginate,
     }
-  },
+  }
 
-  data() {
-    return {
-      acak: "",
-      loading: false,
-      showModal: false,
-      showModalInfo: false,
-    };
-  },
+  return data
+})
 
-  mounted() {
-    setInterval(() => {
-      this.randomEffect();
-    }, 100);
-  },
+const kata = computed<Kata | null>(() => {
+  const result = fetchedData.value?.result
+  if (result && result.length > 0 && result[0]) {
+    return result[0]
+  }
+  return null
+})
 
-  methods: {
-    download() {
-      htmlToImage
-        .toJpeg(document.getElementById("main-gacha"), { quality: 1 })
-        .then(function (dataUrl) {
-          var link = document.createElement("a");
-          link.download = `gachakata-${Math.floor(Math.random() * 99999)}.jpeg`;
-          link.href = dataUrl;
-          link.click();
-        });
-    },
+function randomEffect() {
+  const string = 'GACHA'
+  let a = ''
+  for (let i = 0; i < 5; i++) {
+    a += ' ' + string[Math.floor(Math.random() * string.length)]
+  }
+  acak.value = a
+}
 
-    gacha() {
-      this.loading = true;
-      // this.$nuxt.refresh();
-      this.$router.app.refresh();
-    },
+function randomEffectQ(x: string): string {
+  let a = ''
+  for (let i = 0; i < x.length - 1; i++) {
+    a += ' ' + x[Math.floor(Math.random() * x.length)]
+  }
+  return a
+}
 
-    randomEffect() {
-      let string = "GACHA";
-      let a = "";
+let intervalId: ReturnType<typeof setInterval> | null = null
 
-      for (let i = 0; i < 5; i++) {
-        a += " " + string[Math.floor(Math.random() * string.length)];
-      }
+onMounted(() => {
+  intervalId = setInterval(() => {
+    randomEffect()
+  }, 100)
+})
 
-      this.acak = a;
-    },
+onUnmounted(() => {
+  if (intervalId) {
+    clearInterval(intervalId)
+  }
+})
 
-    randomEffectQ(x) {
-      let string = x;
-      let a = "";
+function download() {
+  const el = document.getElementById('main-gacha')
+  if (!el) return
 
-      for (let i = 0; i < x.length - 1; i++) {
-        a += " " + string[Math.floor(Math.random() * string.length)];
-      }
+  htmlToImage
+    .toJpeg(el, { quality: 1 })
+    .then((dataUrl) => {
+      const link = document.createElement('a')
+      link.download = `gachakata-${Math.floor(Math.random() * 99999)}.jpeg`
+      link.href = dataUrl
+      link.click()
+    })
+}
 
-      return a;
-    },
-  },
-};
+async function gacha() {
+  loading.value = true
+  await refresh()
+  loading.value = false
+}
 </script>

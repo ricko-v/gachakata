@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "app.vercel.gachakata.twa",
+        "sha256_cert_fingerprints": ["2E:6D:F5:A2:18:30:DD:CC:69:A6:20:9F:6A:57:C0:B5:24:AC:F1:6D:BE:C2:B8:27:72:0D:07:90:95:1E:62:E6"]
+      }
+    }]
