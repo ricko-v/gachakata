@@ -909,7 +909,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       }
       _push(`</div></div>`);
       _push(ssrRenderComponent(_component_Settings, {
-        data: unref(cookieData),
+        data: unref(cookieData) ?? null,
         onClose: ($event) => showModal.value = false,
         showModal: unref(showModal)
       }, null, _parent));
@@ -936,4 +936,4 @@ _sfc_main.setup = (props, ctx) => {
 };
 
 export { _sfc_main as default };
-//# sourceMappingURL=index-BwTJ4ot0.mjs.map
+//# sourceMappingURL=index-CxghyFFV.mjs.map
