@@ -49,6 +49,13 @@ export default defineEventHandler(async (event) => {
       result: listKata.length > 0
         ? [listKata[Math.floor(Math.random() * listKata.length)]]
         : [],
+      _debug: {
+        fetchStatus: response.status,
+        bodyLength: body.length,
+        bodySnippet: body.substring(0, 500),
+        liCount: $('body').find('#citatenrijen > li').length,
+        title: $('title').text(),
+      },
     }
   } catch (error) {
     throw createError({
