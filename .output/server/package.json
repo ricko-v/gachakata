@@ -28,7 +28,7 @@
     "domhandler": "5.0.3",
     "domutils": "3.2.2",
     "encoding-sniffer": "0.2.1",
-    "entities": "4.5.0",
+    "entities": "7.0.1",
     "estree-walker": "2.0.2",
     "hookable": "6.1.0",
     "html-to-image": "1.11.13",
